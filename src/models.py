@@ -1,30 +1,54 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    username = Column(String)
+    email = Column(String)
+    password = Column(String)
+    profile = relationship("Profile")
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Profile(Base):
+    __tablename__ = 'profile'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    full_name = Column(String)
+    bio = Column(String)
+    website = Column(String)
+    profile_image = Column(String)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship("User")
 
+class Post(Base):
+    __tablename__ = 'post'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    caption = Column(String)
+    image_video = Column(String)
+    likes_count = Column(Integer)
+    created_at = Column(DateTime)
+
+class Comment(Base):
+    __tablename__ = 'comment'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    post_id = Column(Integer, ForeignKey('post.id'))
+    text = Column(String)
+    created_at = Column(DateTime)
+
+class Like(Base):
+    __tablename__ = 'like'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    post_id = Column(Integer, ForeignKey('post.id'))
+    
+    
     def to_dict(self):
         return {}
 
